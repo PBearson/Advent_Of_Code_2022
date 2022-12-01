@@ -4,6 +4,7 @@ with open("day_1/input.txt", "r") as f:
     input = f.readlines()
 input = [i.replace("\n", "") for i in input]
 
+# For each Elf, find the number of calories and update the max calories as needed
 max_calories = 0
 calories = 0
 for i in input:
