@@ -7,7 +7,7 @@ with open("day_3/input.txt", "r") as f:
     input = f.readlines()
 input = [i.replace("\n", "") for i in input]
 
-items = string.ascii_letters
+item_types = string.ascii_letters
 
 total_priority = 0
 
@@ -25,7 +25,7 @@ for rucksack in input:
             break
 
     # Get the priority of the common item
-    priority = items.find(common_item) + 1
+    priority = item_types.find(common_item) + 1
     total_priority += priority
 
 print("Sum of priorities: %d" % total_priority)
