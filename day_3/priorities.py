@@ -18,7 +18,7 @@ for rucksack in input:
     compartment_b = rucksack[compartment_len:]
     
     # Find the common item using a simple search
-    common_items = ""
+    common_item = ""
     for item in compartment_a:
         if item in compartment_b:
             common_item = item
