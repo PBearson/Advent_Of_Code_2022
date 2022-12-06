@@ -1,4 +1,5 @@
-# Follow the rearrangement procedures, then provide the crates on top of each stack
+# Follow the rearrangement procedures, then provide the crates on top of each stack.
+# Crates can be moved one at a time.
 
 with open("day_5/input.txt", "r") as f:
     input = f.readlines()
