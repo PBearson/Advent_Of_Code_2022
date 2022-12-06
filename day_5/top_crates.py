@@ -16,8 +16,11 @@ for index in range(len(input)):
         procedures_unfiltered = input[index + 1:]
         break
 
+# Reverse the crate order, so the bottom of the stacks are first
+stacks_unfiltered.reverse()
+
 # Put stacks into a more useful data structure (list):
-# Each element of the list is another list. The front of the list represents the top 
+# Each element of the list is another list. The front of the list represents the bottom 
 # of the stack.
 for row in stacks_unfiltered:
     newrow = [row[i:i+3] for i in range(0, len(row), 4)]
@@ -25,7 +28,10 @@ for row in stacks_unfiltered:
     for index, item in enumerate(newrow):
         if len(stacks) < index + 1:
             stacks.append([])
-        stacks[index].append(item)
+        
+        # No need to include the 'empty' crates (the whitespace in the input)
+        if len(item.lstrip()) != 0:
+            stacks[index].append(item)
 
 # Put procedures into a more useful data structure (list):
 # Each element of the list is another list. The first number is how many crates to move.
@@ -34,5 +40,28 @@ for row in procedures_unfiltered:
     newrow = row.split(' ')
     procedures.append([int(newrow[n]) for n in [1, 3, 5]])
 
-# sanity check
-print(procedures)
+# Perform the procedures as instructed
+for procedure in procedures:
+
+    # First parse the move count, source stack and destination stack.
+    count = procedure[0]
+    src = procedure[1] - 1
+    dst = procedure[2] - 1
+    
+    # tmp holds the crates must be moved. They are moved in reverse order to the destination.
+    tmp = stacks[src][-1*count:]
+    tmp.reverse()
+    
+    # Add the crates the destination, and remove them from the source
+    for t in tmp:
+        stacks[dst].append(t)
+        stacks[src].pop()
+
+# Print the top crates: Recall that the top crates are at the end of 
+# each list.
+top_crates = ""
+for stack in stacks:
+    crate = stack[-1][1]
+    top_crates += crate
+
+print("Top crates: %s" % top_crates)
