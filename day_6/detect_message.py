@@ -7,7 +7,7 @@ input = [i.replace("\n", "") for i in input]
 characters = input[0]
 processed = 0
 
-# Get each contiguous sequence of 4 characters and check if they are unique
+# Get each contiguous sequence of 14 characters and check if they are unique
 for i in range(len(characters) - 13):
     marker = characters[i:i+14]
     if len(set(marker)) == 14:
