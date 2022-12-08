@@ -15,6 +15,29 @@ class Directory:
         self.dirs = dirs
         self.files = files
 
+    # Find the total sum of all directories whose sizes are at most 100000
+    def sum_directories(self):
+        dirsize = 0
+        total_sum = 0
+        threshold = 100000
+
+        # Add the size of the files
+        for f in self.files:
+            dirsize += f.size
+
+        # Add the size of the directories
+        for d in self.dirs:
+            child_dirsize, child_total_sum = d.sum_directories()
+            dirsize += child_dirsize
+            total_sum += child_total_sum
+        
+        # Check if the size is below the threshold
+        if dirsize <= threshold:
+            total_sum += dirsize
+        
+        return dirsize, total_sum
+
+
     # Print out the directory in a user-friendly format
     def print_directory(self, depth = 1, print_root_dir = True):
 
@@ -85,6 +108,7 @@ class Directory:
 current_dir = []
 root_dir = Directory()
 
+# Handle ls command by adding the listed contents to the filesystem 
 def handle_ls(response):
     global current_dir, root_dir
     
@@ -95,6 +119,7 @@ def handle_ls(response):
         else:
             root_dir.add_file(current_dir, item[1], int(item[0]))
 
+# Handle cd command by adding the target dir to the filesystem
 def handle_cd(dir):
     global current_dir, root_dir
 
@@ -104,12 +129,14 @@ def handle_cd(dir):
         current_dir.append(dir)
         root_dir.add_directory(current_dir)
 
+# Parse the command: it is either cd or ls
 def handle_command(command, response):
     if command[0] == "cd":
         handle_cd(command[1])
     elif command[0] == "ls":
         handle_ls(response)
 
+# Iterate through the input to build the filesystem
 for i in range(len(input)):
     if input[i][0] != "$":
         continue
@@ -122,5 +149,10 @@ for i in range(len(input)):
         response.append(input[j])
     handle_command(command, response)
 
+# Print the filesystem, because why not
 print("Filesystem:")
 root_dir.print_directory()
+
+# Get the sum of our directories
+total_sum, target_sum = root_dir.sum_directories()
+print("Sum of target directories: %d" % target_sum)
