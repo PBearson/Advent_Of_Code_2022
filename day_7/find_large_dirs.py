@@ -15,17 +15,33 @@ class Directory:
         self.dirs = dirs
         self.files = files
 
-    def print_directory(self, depth = 0):
+    def print_directory(self, depth = 1, print_root_dir = True):
         tabs = "\t" * depth
-        print(f"{tabs}{self.name}")
+        if print_root_dir:
+            print(f"Dir: {self.name}")
         for f in self.files:
-            print(f"{tabs}{f.name}")
+            print(f"{tabs}File: {f.name} {f.size} (in {self.name})")
         for d in self.dirs:
-            d.print_directory(depth + 1)
+            print(f"{tabs}Dir: {d.name}")
+            d.print_directory(depth + 1, False)
 
     def add_file(self, path, filename, filesize):
-        print(path, filename, filesize)
+        
+        # Ignore root dir
+        if path[0] == "/":
+            path = path[1:]
+        
+        # Reach the target directory
+        curdir = self
+        while len(path) > 0:
+            curdir = [d for d in curdir.dirs if d.name == path[0]][0]
+            path = path[1:]
 
+        # Add the new file if it does not exist
+        targetfile = [f for f in curdir.files if f.name == filename]
+        if len(targetfile) == 0:
+            newfile = File(filename, filesize)
+            curdir.files.append(newfile)
 
     def add_directory(self, path):
 
@@ -90,5 +106,5 @@ for i in range(len(input)):
         response.append(input[j])
     handle_command(command, response)
 
-# print("Filesystem:")
-# root_dir.print_directory()
+print("Filesystem:")
+root_dir.print_directory()
