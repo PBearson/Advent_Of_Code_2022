@@ -15,16 +15,31 @@ class Directory:
         self.dirs = dirs
         self.files = files
 
+    # Print out the directory in a user-friendly format
     def print_directory(self, depth = 1, print_root_dir = True):
+
+        # Tabs will make it prettier :)
         tabs = "\t" * depth
+
+        # Only print the root dir if we ask for it (i.e., first time we call this function)
         if print_root_dir:
             print(f"Dir: {self.name}")
+
+        # Print the files and get the total size of all files
+        dirsize = 0
         for f in self.files:
-            print(f"{tabs}File: {f.name} {f.size} (in {self.name})")
+            print(f"{tabs}File: {f.name} {f.size}")
+            dirsize += f.size
+
         for d in self.dirs:
             print(f"{tabs}Dir: {d.name}")
-            d.print_directory(depth + 1, False)
+            dirsize += d.print_directory(depth + 1, False)
 
+        # Print the total directory size
+        print(f"{tabs}TOTAL DIRECTORY SIZE: {dirsize}")
+        return dirsize
+
+    # Add a file to the filesystem
     def add_file(self, path, filename, filesize):
         
         # Ignore root dir
@@ -43,6 +58,7 @@ class Directory:
             newfile = File(filename, filesize)
             curdir.files.append(newfile)
 
+    # Add a directory to the filesystem
     def add_directory(self, path):
 
         # Current directory has not been defined yet
@@ -77,7 +93,7 @@ def handle_ls(response):
         if item[0] == "dir":
             root_dir.add_directory(current_dir + item[1:])
         else:
-            root_dir.add_file(current_dir, item[1], item[0])
+            root_dir.add_file(current_dir, item[1], int(item[0]))
 
 def handle_cd(dir):
     global current_dir, root_dir
