@@ -15,6 +15,8 @@ def is_edge(x, y, x_len, y_len):
 
     return left_edge or top_edge or right_edge or bottom_edge
 
+# Return whether the given tree can be seen from outside by comparing 
+# its height to the neighbors' heights
 def visible_from_direction(height, neighbors):
     return height > max(neighbors)
 
