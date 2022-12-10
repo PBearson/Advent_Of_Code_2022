@@ -32,16 +32,15 @@ def before_cycle(ins = None):
         addx_value = ins.split(" ")[1]
         pipeline.append(["addx", int(addx_value), 2])
 
-# During the cycle, we check the CRT row position against the value of the X register
+# During the cycle, we check the CRT position against the value of the X register
 def during_cycle():
     global cycle, x_reg
 
-    # Get the absolute position and row position
-    crt_position = cycle - 1
-    crt_row_position = crt_position % 40
+    # Get the CRT position row position
+    crt_position = (cycle - 1) % 40
 
-    # If the X register is within 1 pixel of the row position, then light the pixel up
-    if abs(crt_row_position - x_reg) <= 1:
+    # If the X register is within 1 pixel of the CRT position, then light the pixel up
+    if abs(crt_position - x_reg) <= 1:
         pixels.append("#")
     else:
         pixels.append(".")
