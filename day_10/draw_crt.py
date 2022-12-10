@@ -87,5 +87,5 @@ while cycle - 1 < len(input) or len(pipeline) > 0:
 # Display the screen
 for i in range(len(pixels)):
     print(pixels[i], end = "")
-    if i % 40 == 0:
+    if (i + 1) % 40 == 0:
         print("")
