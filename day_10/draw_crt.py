@@ -36,7 +36,7 @@ def before_cycle(ins = None):
 def during_cycle():
     global cycle, x_reg
 
-    # Get the CRT position row position
+    # Get the CRT position
     crt_position = (cycle - 1) % 40
 
     # If the X register is within 1 pixel of the CRT position, then light the pixel up
