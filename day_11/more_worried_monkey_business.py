@@ -73,7 +73,7 @@ def initialize_monkeys():
         start_items = [s.replace(",", "") for s in start_items]
         start_items = [int(s) for s in start_items]
         
-        # Get the operand and operand
+        # Get the operation and operand
         operation, operand = monkey_info[2].split(" ")[-2:]
         
         # Get the division test
@@ -95,6 +95,7 @@ def initialize_monkeys():
         # Update common divisor
         commonDiv *= divTest
 
+# Run a single round by getting the new worry levels and passing the items to the new monkeys
 def run_single_round():
     global monkeys, commonDiv
 
