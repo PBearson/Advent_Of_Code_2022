@@ -96,6 +96,10 @@ def get_distances():
         # Get the visitable positions from the current position
         next_positions = get_next_positions(current_position)
 
+        # Return distance if we found the end position
+        if tuple(end_position) in next_positions:
+            return distances[current_position] + 1
+
         # Iterate through the adjacent positions
         for next_pos in next_positions:
 
@@ -106,6 +110,8 @@ def get_distances():
             if next_pos not in visited and next_pos not in queue:
                 queue.append(next_pos)
 
+    return 2 ** 32
+
 initialize()
-get_distances()
-print("Number of steps to highest elevation: %d" % distances[tuple(end_position)])
+min_dist = get_distances()
+print("Number of steps to highest elevation: %d" % min_dist)

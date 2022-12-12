@@ -84,7 +84,7 @@ def get_next_positions(player_position):
 
 # Get the shortest distance from a given start position to every other position
 def get_distances(start_position):
-    global distances
+    global distances, input, end_positions
 
     queue = [start_position]
     visited = []
@@ -105,16 +105,19 @@ def get_distances(start_position):
             # Get the new distance for that position
             distances[next_pos] = min(distances[next_pos], distances[current_position] + 1)
 
+            # Check if we are at the end
+            next_height = input[next_pos[0]][next_pos[1]]
+            if next_height in ['S', 'a']:
+                return distances[next_pos]
+
             # Add the position to the queue if we have not visited already (and if it's not already in the qeueu)
             if next_pos not in visited and next_pos not in queue:
                 queue.append(next_pos)
+    return 2 ** 32
 
 # Initialize everything
 initialize()
 
-# Get the distances from the start position 
-get_distances(tuple(start_position))
-
-# Find the end position with the minimum distance
-min_distance = min([distances[e] for e in end_positions])
-print("Number of steps to highest elevation: %d" % min_distance)
+# Get the min distance from the start position to any end position
+min_dist = get_distances(tuple(start_position))
+print("Number of steps to highest elevation: %d" % min_dist)
