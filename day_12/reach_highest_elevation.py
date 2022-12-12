@@ -81,7 +81,7 @@ def get_next_positions(player_position):
 
 # Get the shortest distance from the start position to every other position
 def get_distances():
-    global distances, start_position, end_position
+    global distances, start_position
 
     queue = [tuple(start_position)]
     visited = []
