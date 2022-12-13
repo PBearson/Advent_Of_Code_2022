@@ -35,7 +35,7 @@ def transform_packet(packet):
                 elif packet[j] == "]":
                     layers -= 1
 
-                # At this point, we have the indices of the sublist: i and j + 1. We use recursion 
+                # At this point, we have the indices of the sublist: i and j. We use recursion 
                 # to transform the sublist and append it to the root list.
                 if layers == 0:
                     sublist = transform_packet(packet[i:j+1])
@@ -61,7 +61,7 @@ def transform_input(input):
 
     return packets
 
-# Compare 2 integers, return whether they are in the right order:
+# Given 2 integers, return whether they are in the right order:
 #   - If n1 is less than n2, return 1
 #   - If n1 is greater than n1, return -1
 #   - If equal, return 0
@@ -72,8 +72,8 @@ def compare_ints(n1, n2):
         return -1
     return 0
 
-# Compare the first value in both list, then the second value,
-# and so on.
+# Compare the first value in both lists, then the second value,
+# and so on. Call recursively as needed.
 #   - If list1 runs out of items first, return 1
 #   - If list2 runs out of items first, return -1
 #   - Otherwise, return 0
