@@ -131,31 +131,45 @@ def compare_list_and_int(list1:list, n2:int, list_is_left:bool):
         return compare_lists(list1, list2)
     return compare_lists(list2, list1)
 
-# Sort the packets in-place. Algorithm: bubble sort (sorry)
-def sort_packets(packets):
+# Sort the packets in-place and get the key. Algorithm: bubble sort (sorry).
+def sort_and_get_key(packets):
+    
+    # Update divider indices over time. At the end we will use them to calculate the divider key.
+    divider1 = [[2]]
+    divider2 = [[6]]
+    divider1_index = 0
+    divider2_index = 0
+
+    # Bubble sort
     while True:
         swap = False
         for i in range(len(packets) - 1):
+
+            # If an adjacent pair is out-of-order, swap them.
             if compare_lists(packets[i], packets[i + 1]) == -1:
                 packets[i], packets[i + 1] = packets[i + 1], packets[i]
                 swap = True
+
+            # Does this pair have the first divider?
+            if packets[i] == divider1:
+                divider1_index = i + 1
+            elif packets[i + 1] == divider1:
+                divider1_index = i + 2
+
+            # Does this pair have the second divider?
+            if packets[i] == divider2:
+                divider2_index = i + 1
+            elif packets[i + 1] == divider2:
+                divider2_index = i + 2
+
+        # Bubble sort is done if the whole list is ordered
         if swap == False:
             break
-
-# Calculate the decoder key by finding the divider packets and m
-# multiplying their indices. 
-def get_decoder_key(packets):
-    key = 1
-    for i in range(len(packets)):
-        index = i + 1
-        divider1 = [[2]]
-        divider2 = [[6]]
-        if packets[i] in [divider1, divider2]:
-            key *= index
-    return key
+    
+    # Get the key
+    return divider1_index * divider2_index
 
 packets = transform_input(input)
 insert_divider_packets(packets)
-sort_packets(packets)
-key = get_decoder_key(packets)
+key = sort_and_get_key(packets)
 print("Decoder key: %d" % key)
