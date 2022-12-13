@@ -14,10 +14,13 @@ def transform_packet(packet):
     # Go until we reach the end of the packet
     while i < len(packet):
 
-        # If this is an integer, append it to the list
+        # If this is an integer, then append it to the list. Integers may be multiple digits in length.
         if packet[i] in integers:
-            newlist.append(int(packet[i]))
-            i += 1
+            j = i
+            while packet[j] in integers:
+                j += 1
+            newlist.append(int(packet[i:j]))
+            i = j
 
         # If this is an opening bracket, then it is the start of a a list, in which case
         # we need to find the closing bracket. Since lists can be nested, we can keep a tally
@@ -79,20 +82,17 @@ def compare_lists(list1, list2):
 
     for index in range(listlen):
 
-        # If we are out of bounds for one of the lists, then result depends on which list is out-of-bounds
+        # If left side runs out of items, return 1. If right side runs out of items, return -1.
         if index >= len(list1):
-            print("Left side ran out of items")
             return 1
         if index >= len(list2):
-            print("Right side ran out of items")
             return -1
         
         # Compare element types
         element1 = list1[index]
         element2 = list2[index]
 
-        print("Comparing %s and %s" % (element1, element2))
-
+        # Call the appropriate function based on the element types
         ret = 0
         if type(element1) == int and type(element2) == int:
             ret = compare_ints(element1, element2)
@@ -106,10 +106,11 @@ def compare_lists(list1, list2):
         elif type(element1) == int and type(element2) == list:
             ret = compare_list_and_int(element2, element1, False)
 
-        print("Result of %s and %s: %d" % (element1, element2, ret))
+        # Keep going if the return code is 0, otherwise stop
         if ret != 0:
             return ret
 
+    # If we reach the end of the list, simply return 0
     return 0
 
 # Compare a list and an integer by first converting the integer to a list,
@@ -117,26 +118,24 @@ def compare_lists(list1, list2):
 def compare_list_and_int(list1:list, n2:int, list_is_left:bool):
     list2 = [n2]
     
+    # Call compare_lists, depending on which element was the original list.
     if list_is_left:
         return compare_lists(list1, list2)
     return compare_lists(list2, list1)
 
-
+# Compare all packet pairs and sum the indices of the correctly ordered pairs. 
+# Each pair is a list, so we simply call compare_lists on all pairs. A pair is
+# correctly ordered if it returns 1.
 def compare_packets(packets):
     result = 0
     index = 0
     for packet1, packet2 in packets:
         index += 1
-        print("CHECKING PAIR ", index)
-        print("PACKET 1: ", packet1)
-        print("PACKET 2: ", packet2)
         n = compare_lists(packet1, packet2)
-        print("RESULT: %d\n" % n)
         if n == 1:
             result += index
     return result
         
 packets = transform_input(input)
 result = compare_packets(packets)
-print(result)
-#5930 is too low
+print("Sum of indices: %d" % result)
