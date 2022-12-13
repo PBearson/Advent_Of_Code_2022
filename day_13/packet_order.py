@@ -1,6 +1,6 @@
 # Find the pairs of packets that are in the right order, then find the sum of their indices.
 
-with open("day_13/sample_input.txt", "r") as f:
+with open("day_13/input.txt", "r") as f:
     input = f.read().splitlines()
 
 # Given a packet, return a list of numbers and lists
@@ -39,7 +39,7 @@ def transform_packet(packet):
                     newlist.append(sublist)
                     i += j - 1
                     break
-                
+
         # Other elements, e.g., commas, are ignored
         else:
             i += 1
@@ -58,4 +58,85 @@ def transform_input(input):
 
     return packets
 
+# Compare 2 integers, return whether they are in the right order:
+#   - If n1 is less than n2, return 1
+#   - If n1 is greater than n1, return -1
+#   - If equal, return 0
+def compare_ints(n1, n2):
+    if n1 < n2:
+        return 1
+    if n1 > n2:
+        return -1
+    return 0
+
+# Compare the first value in both list, then the second value,
+# and so on.
+#   - If list1 runs out of items first, return 1
+#   - If list2 runs out of items first, return -1
+#   - Otherwise, return 0
+def compare_lists(list1, list2):
+    listlen = max(len(list1), len(list2))
+
+    for index in range(listlen):
+
+        # If we are out of bounds for one of the lists, then result depends on which list is out-of-bounds
+        if index >= len(list1):
+            print("Left side ran out of items")
+            return 1
+        if index >= len(list2):
+            print("Right side ran out of items")
+            return -1
+        
+        # Compare element types
+        element1 = list1[index]
+        element2 = list2[index]
+
+        print("Comparing %s and %s" % (element1, element2))
+
+        ret = 0
+        if type(element1) == int and type(element2) == int:
+            ret = compare_ints(element1, element2)
+                
+        elif type(element1) == list and type(element2) == list:
+            ret = compare_lists(element1, element2)
+
+        elif type(element1) == list and type(element2) == int:
+            ret = compare_list_and_int(element1, element2, True)
+
+        elif type(element1) == int and type(element2) == list:
+            ret = compare_list_and_int(element2, element1, False)
+
+        print("Result of %s and %s: %d" % (element1, element2, ret))
+        if ret != 0:
+            return ret
+
+    return 0
+
+# Compare a list and an integer by first converting the integer to a list,
+# then calling compare_lists.
+def compare_list_and_int(list1:list, n2:int, list_is_left:bool):
+    list2 = [n2]
+    
+    if list_is_left:
+        return compare_lists(list1, list2)
+    return compare_lists(list2, list1)
+
+
+def compare_packets(packets):
+    result = 0
+    index = 0
+    for packet1, packet2 in packets:
+        index += 1
+        print("CHECKING PAIR ", index)
+        print("PACKET 1: ", packet1)
+        print("PACKET 2: ", packet2)
+        n = compare_lists(packet1, packet2)
+        print("RESULT: %d\n" % n)
+        if n == 1:
+            result += index
+    return result
+        
 packets = transform_input(input)
+result = compare_packets(packets)
+print(result)
+#5930 is too low
