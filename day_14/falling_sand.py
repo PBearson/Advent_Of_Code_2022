@@ -1,6 +1,6 @@
 # Find how many units of sand come to rest before sand begins to fall into the void below.
 
-with open("day_14/sample_input.txt", "r") as f:
+with open("day_14/input.txt", "r") as f:
     input = f.read().splitlines()
 
 # Transform the input into a list of sublists, where each sublist has the following structure:
@@ -76,8 +76,59 @@ def draw_room_pretty(room, sand):
     for r in room:
         print("".join(r))
 
+# Find the next position for one unit of sand. 
+# Draw it. Return whether the sand was drawn or not.
+def sand_step(room, sand):
+    x_pos, y_pos = sand
+
+    # Move the sand until it can no longer be moved
+    while True:
+        # Out of bounds: sand now falls into the void
+        if x_pos < 0 or x_pos >= len(room[0]) or y_pos >= len(room):
+            return False
+
+        # Can we move down?
+        if y_pos == len(room) - 1 or room[y_pos + 1][x_pos] == '.':
+            y_pos += 1
+            continue
+
+        # Can we move diagonally left?
+        if x_pos == 0 or room[y_pos + 1][x_pos - 1] == '.':
+            x_pos -= 1
+            y_pos += 1
+            continue
+
+        # Can we move diagonally right?
+        if x_pos == len(room) - 1 or room[y_pos + 1][x_pos + 1] == '.':
+            x_pos += 1
+            y_pos += 1
+            continue
+
+        # Cannot move
+        break
+
+    room[y_pos][x_pos] = 'O'
+    return True
+
+# Run the sand simulation. Return the number of sand units drawn.
+def run_sand_sim(room, sand):
+    units = 0
+
+    # Keep stepping until sand_step returns False
+    while True:
+        sand_drawn = sand_step(room, sand)
+        if not sand_drawn:
+            break
+        units += 1
+    return units
+
 scans = transform_input(input)
 x1, x2, y = get_room_dimensions(scans)
 room, sand = draw_room(scans, x1, x2, y)
 
+sand_count = run_sand_sim(room, sand)
+
+print("Sand-filled room:")
 draw_room_pretty(room, sand)
+
+print("Sand count: %d" % sand_count)
