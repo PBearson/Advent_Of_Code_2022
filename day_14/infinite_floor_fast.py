@@ -1,5 +1,8 @@
 # Find how many units of sand come to rest before sand reaches the source. The floor is infinite.
 
+# This is the fast way. It inspects each row of the cave exactly once and calculates the number of sand units
+# that will fit there.
+
 with open("day_14/input.txt", "r") as f:
     input = f.read().splitlines()
 
@@ -39,11 +42,8 @@ def get_room_dimensions(scans):
 # Given the room dimensions and the scans, return a matrix of points, where each
 # point is either a '.' (air) or a '#' (rock). Also return the sand source.
 def draw_room(scans, min_x, max_x, max_y):
-    room = []
-
     max_y += 2
-    min_x -= 500
-    max_x += 500
+    room = []
 
     # Create the initially empty room, except for the floor of rocks
     for y in range(0, max_y + 1):
@@ -83,60 +83,42 @@ def draw_room_pretty(room, sand):
     for r in room:
         print("".join(r))
 
-# Find the next position for one unit of sand. 
-# Draw it. Return whether the sand was drawn or not.
-def sand_step(room, sand):
-    x_pos, y_pos = sand
 
-    # If bottom 3 positions are filled, then the sand has reached the top and we are done.
-    pos1 = room[y_pos + 1][x_pos - 1]
-    pos2 = room[y_pos + 1][x_pos]
-    pos3 = room[y_pos + 1][x_pos + 1]
-    if pos1 == 'O' and pos2 == 'O' and pos3 == 'O':
-        return False
+# Count the number of sand units that can fit, row by row. The first row has 1 unit.
+# Every row can fit up to 2 more units than the previous row. Sand cannot go in a space
+# if it is occupied by a rock. Gaps are created when 3 or more units of rock are adjacent
+# on the same row. If the rock length is N, then the gap size under that rock is N - 2; the
+# gap size under that is N - 4, then N - 6, and so on, until the gap is closed.
+# Return the count.
+def count_sand(room, sand):
+    count = 0
+    for i in range(len(room) - 1):
+        row = room[i]
+        rowcount = 1 + (i * 2) - len([r for r in row if r == '#'])
+        
+        # Check top 3 spaces; sand cannot fit if the top 3 spaces are rocks
+        if i > 0:
+            for j in range(1, len(row) - 1):
 
-    # Move the sand.
-    while True:
+                # Get the top 3 spaces
+                pos1 = room[i - 1][j - 1]
+                pos2 = room[i - 1][j]
+                pos3 = room[i - 1][j + 1]
 
-        # Can we move down?
-        if y_pos == len(room) - 1 or room[y_pos + 1][x_pos] == '.':
-            y_pos += 1
-            continue
+                # If this is an empty space and the top 3 spaces are rocks, then sand cannot
+                # go here. We also replace this space with a rock so that the effect cascades down.
+                if room[i][j] == '.' and pos1 == '#' and pos2 == '#' and pos3 == '#':
+                    room[i][j] = '#'
+                    rowcount -= 1
 
-        # Can we move diagonally left?
-        if x_pos == 0 or room[y_pos + 1][x_pos - 1] == '.':
-            x_pos -= 1
-            y_pos += 1
-            continue
+        count += rowcount
 
-        # Can we move diagonally right?
-        if x_pos == len(room) - 1 or room[y_pos + 1][x_pos + 1] == '.':
-            x_pos += 1
-            y_pos += 1
-            continue
-
-        # Cannot move
-        break
-
-    room[y_pos][x_pos] = 'O'
-    return True
-
-# Run the sand simulation. Return the number of sand units drawn.
-def run_sand_sim(room, sand):
-    units = 0
-
-    # Keep stepping until sand_step returns False
-    while True:
-        units += 1
-        sand_drawn = sand_step(room, sand)
-        if not sand_drawn:
-            break
-    return units
+    return count
 
 scans = transform_input(input)
 x1, x2, y = get_room_dimensions(scans)
 room, sand = draw_room(scans, x1, x2, y)
 
-sand_count = run_sand_sim(room, sand)
+count = count_sand(room, sand)
 
-print("Sand count: %d" % sand_count)
+print("Sand count: %d" % count)
