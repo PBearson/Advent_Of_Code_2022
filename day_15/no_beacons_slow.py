@@ -1,5 +1,8 @@
 # Count the number of positions that cannot contain a beacon on row 2000000.
 
+# This is the slow way. For each position in the target row, we compare the distance between that position and the distances of every other sensor.
+# If the distance is too short, i.e., if this position is too close to a sensor, then a beacon cannot go in that position.
+
 with open("day_15/input.txt", "r") as f:
     input = f.read().splitlines()
 
