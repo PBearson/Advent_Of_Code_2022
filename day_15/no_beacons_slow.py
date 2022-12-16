@@ -87,4 +87,4 @@ distances = create_distances_map(readings)
 min_column, max_column = get_column_bounds(distances)
 
 exclusion_count = count_excluded_beacons(2000000, readings, distances, min_column, max_column)
-print("Number of positions which cannot have a beacon: %d" exclusion_count)
+print("Number of positions which cannot have a beacon: %d" % exclusion_count)
