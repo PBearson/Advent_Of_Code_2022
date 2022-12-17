@@ -55,8 +55,6 @@ def check_overlap(min1, max1, min2, max2):
 # Given a set of bounds [(min1, max1), (min2, max2), ...], merge them into a maximumally concise set.
 # Continue merging until no more merges are possible.
 def merge_bounds(current_bounds):
-    
-    merged_bounds = []
     merged = False
     
     # Iterate through every pair of bounds
@@ -89,7 +87,7 @@ def merge_bounds(current_bounds):
                 min3 = min(min1, min2)
                 max3 = max(max1, max2)
 
-                merged_bounds.append((min3, max3))
+                current_bounds.append((min3, max3))
 
                 # Pop the un-merged bounds
                 current_bounds.pop(j)
@@ -99,7 +97,7 @@ def merge_bounds(current_bounds):
 
     # If we merged, then call this function again
     if merged:
-        return merge_bounds(current_bounds + merged_bounds)
+        return merge_bounds(current_bounds)
 
     # No merges occured -- we are done
     else:
@@ -164,9 +162,11 @@ def get_tuning_frequency(reachable, bound):
                 
                 # Calculate the tuning frequency
                 freq = x * 4000000 + y
-                return freq
+                return x, y, freq
+                
+    return 0, 0, 0
 
 readings = parse_input(input)
 reachable = get_all_reachable_positions(readings)
-freq = get_tuning_frequency(reachable, 4000000)
-print("Tuning frequency: %d\n" % freq)
+x, y, freq = get_tuning_frequency(reachable, 4000000)
+print("Tuning frequency for position (%d, %d): %d\n" % (x, y, freq))
