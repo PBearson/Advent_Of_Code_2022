@@ -1,6 +1,7 @@
-# Find the most pressure that can be released in 30 minutes
+# Find the most pressure that can be released in 30 minutes. This is the bad, exponential-time implementation that
+# uses a recursive graph search approach
 
-with open("day_16/sample_input.txt", "r") as f:
+with open("day_16/input.txt", "r") as f:
     input = f.read().splitlines()
 
 # Parse input into a dictionary, where keys are valve IDs, and values
@@ -59,3 +60,7 @@ def find_maximum_pressure_graph_approach(tunnels, current_valve, current_time, c
     return max(pressure_with_open, pressure_without_open)
 
 tunnels = parse_input(input)
+
+# This probably won't return for a while
+pressure = find_maximum_pressure_graph_approach(tunnels, "AA", 30, 0, [])
+print("Maximum pressure: %d" % pressure)
