@@ -1,5 +1,10 @@
 # Find the most pressure that can be released in 30 minutes. 
 
+# This is the better solution. It checks all permutations of paths that can be 
+# reached in under 30 minutes. To save time, it pre-computes the path length from
+# every valve to every other valve. Unfortunately, this means space complexity 
+# grows exponentially.
+
 import time
 
 with open("day_16/input.txt", "r") as f:
