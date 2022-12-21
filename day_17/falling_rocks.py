@@ -1,6 +1,6 @@
 # Find the height of the stack of rocks after 2022 rocks have stopped falling
 
-with open("day_17/sample_input.txt", "r") as f:
+with open("day_17/input.txt", "r") as f:
     input = f.read().splitlines()
 
 # Initialize the room. The width is exactly 7 units wide. The maximum height
@@ -68,6 +68,7 @@ def move_right_is_out_of_bounds(rock_type, rock_x, max_x):
         return rock_x + 1 == max_x 
     
 
+# Check if moving down is out of bounds by checking the max Y value (i.e., the floor position)
 def move_down_is_out_of_bounds(rock_type, rock_y, max_y):
     
     # For all types except + type: Check Y
@@ -95,7 +96,7 @@ def can_move_left(room, rock_type, rock_x, rock_y):
     if rock_type == "+":
         check1 = is_empty(room, rock_x - 1, rock_y)
         check2 = is_empty(room, rock_x, rock_y - 1)
-        check3 = is_empty(room, rock_x, rock_y - 1)
+        check3 = is_empty(room, rock_x, rock_y + 1)
         return check1 and check2 and check3
 
     # For backwards L type: check (X, Y), (X + 2, Y - 1), and (X + 2, Y - 2)
@@ -155,8 +156,8 @@ def can_move_right(room, rock_type, rock_x, rock_y):
 
     # For big type: Check (X + 1, Y) and (X + 1, Y - 1)
     if rock_type == "O":
-        check1 = is_empty(room, rock_x + 1, rock_y)
-        check2 = is_empty(room, rock_x + 1, rock_y - 1)
+        check1 = is_empty(room, rock_x + 2, rock_y)
+        check2 = is_empty(room, rock_x + 2, rock_y - 1)
         return check1 and check2
 
 # If the rock tries to move down, make sure it does not collide with the floor
@@ -284,7 +285,6 @@ def drop_next_rock(room, jetstream, jetstream_position, rocks_dropped, max_heigh
     # max height. 
     rock_x, rock_y = get_spawn_position(room, next_rock, max_height)
 
-    print("Spawned %s at (%d, %d)" % (next_rock, rock_x, rock_y))
     while True:
         # Get jetstream direction
         jetstream_direction = jetstream[jetstream_position % len(jetstream)]
@@ -303,11 +303,8 @@ def drop_next_rock(room, jetstream, jetstream_position, rocks_dropped, max_heigh
         if can_move_down(room, next_rock, rock_x, rock_y):
             rock_y += 1
 
-            print("Tried to move %s and down. New position is (%d, %d)" % (jetstream_direction, rock_x, rock_y))
-
         # Cannot drop any further
         else:
-            print("Tried to move %s but could not move down. Drawing at (%d, %d)" % (jetstream_direction, rock_x, rock_y))
             # Draw the rock into the room, so that consecutive rocks can collide with it
             draw_rock(room, next_rock, rock_x, rock_y)
 
@@ -331,10 +328,5 @@ jetstream = input[0]
 room = initialize_room()
 
 tower_height = drop_all_rocks(room, jetstream)
-
-for i, r in enumerate(room):
-    # if len(room) - i > 30:
-        # continue
-    print(i, " ".join(r))
 
 print("Tower height: %d" % tower_height)
