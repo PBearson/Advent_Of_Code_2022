@@ -39,15 +39,52 @@ def get_next_rock(rocks_dropped):
 def is_empty(room, pos_x, pos_y):
     return room[pos_y][pos_x] == '.'
 
+# Return True if moving left would lead to an out-of-bounds.
+# Since the rock X position is already relative to its left-most
+# position, checking this bound is straightforward.  
+def move_left_is_out_of_bounds(rock_type, rock_x):
+    return rock_x == 0
+
+# Return True if moving right would lead to an out-of-bounds
+def move_right_is_out_of_bounds(rock_type, rock_x, max_x):
+
+    # For wide type: Check X + 3
+    if rock_type == "W":
+        return rock_x + 3 == max_x
+
+    # For + and L type: Check X + 2
+    if rock_type in "+L":
+        return rock_x + 2 == max_x
+
+    # For tall type: Check X
+    if rock_type == "T":
+        return rock_x == max_x
+
+    # For big type: Check X + 1
+    if rock_type == "O":
+        return rock_type + 1 == max_x 
+    
+
+def move_down_is_out_of_bounds(rock_type, rock_y, max_y):
+    
+    # For all types except + type: Check Y
+    if rock_type in "WLTO":
+        return rock_y == max_y
+
+    # For + type: Check Y + 1
+    if rock_type == "+":
+        return rock_y + 1 == max_y
+
+
 # If the rock tries to move left, make sure it does not collide with the wall
 # or other rocks
 def can_move_left(room, rock_type, rock_x, rock_y):
 
-    # If rock is too close to the wall, immediately return False
-    if rock_x == 0:
+    # Is moving left out of bounds?
+    if move_left_is_out_of_bounds(rock_type, rock_x):
         return False
 
-    # For wide type, we only need to check the X directly
+    # For wide type: Check (X, Y)
     if rock_type == "W":
         return is_empty(room, rock_x - 1, rock_y)
 
@@ -81,12 +118,52 @@ def can_move_left(room, rock_type, rock_x, rock_y):
 
 # If the rock tries to move right, make sure it does not collide with the wall
 # or other rocks
-def can_move_right(room, current_rock_type, rock_x, rock_y):
-    return True
+def can_move_right(room, rock_type, rock_x, rock_y):
+
+    # Is moving right out of bounds?
+    if move_right_is_out_of_bounds(rock_type, rock_x, len(room[0])):
+        return False
+
+    # For wide type: check (X + 3, Y)
+    if rock_type == "W":
+       return is_empty(room, rock_x + 4, rock_y)
+
+    # For + type: check (X + 2, Y), (X + 1, Y + 1), and (X + 1, Y - 1)
+    if rock_type == "+":
+        check1 = is_empty(room, rock_x + 3, rock_y)
+        check2 = is_empty(room, rock_x + 2, rock_y + 1)
+        check3 = is_empty(room, rock_x + 2, rock_y - 1)
+        return check1 and check2 and check3
+
+    # For backward L type: check (X + 2, Y), (X + 2, Y - 1), and (X + 2, Y - 2)
+    if rock_type == "L":
+        check1 = is_empty(room, rock_x + 3, rock_y)
+        check2 = is_empty(room, rock_x + 3, rock_y - 1)
+        check3 = is_empty(room, rock_x + 3, rock_y - 2)
+        return check1 and check2 and check3
+
+    # For tall type: check (X, Y) through (X, Y - 3)
+    if rock_type == "T":
+        check1 = is_empty(room, rock_x + 1, rock_y)
+        check2 = is_empty(room, rock_x + 1, rock_y - 1)
+        check3 = is_empty(room, rock_x + 1, rock_y - 2)
+        check4 = is_empty(room, rock_x + 1, rock_y - 3)
+        return check1 and check2 and check3 and check4
+
+    # For big type: Check (X + 1, Y) and (X + 1, Y - 1)
+    if rock_type == "O":
+        check1 = is_empty(rock_x + 1, rock_y)
+        check2 = is_empty(rock_x + 1, rock_y - 1)
+        return check1 and check2
 
 # If the rock tries to move down, make sure it does not collide with the floor
 # or other rocks
-def can_move_down(room, current_rock_type, rock_x, rock_y):
+def can_move_down(room, rock_type, rock_x, rock_y):
+
+    # Is moving down out of bounds?
+    if move_down_is_out_of_bounds(rock_type, rock_y, len(room)):
+        return False
+
     return True
 
 def drop_next_rock(room, jetstream, jetstream_position, rocks_dropped, max_height):
