@@ -164,7 +164,37 @@ def can_move_down(room, rock_type, rock_x, rock_y):
     if move_down_is_out_of_bounds(rock_type, rock_y, len(room)):
         return False
 
-    return True
+    # For wide type: Check (X, Y) through (X + 3, Y)
+    if rock_type == "W":
+        check1 = is_empty(room, rock_x, rock_y + 1)
+        check2 = is_empty(room, rock_x + 1, rock_y + 1)
+        check3 = is_empty(room, rock_x + 2, rock_y + 1)
+        check4 = is_empty(room, rock_x + 3, rock_y + 1)
+        return check1 and check2 and check3 and check4
+
+    # For + type: Check (X, Y), (X + 2, Y), and (X + 1, Y + 1)
+    if rock_type == "+":
+        check1 = is_empty(room, rock_x, rock_y + 1)
+        check2 = is_empty(room, rock_x + 2, rock_y + 1)
+        check3 = is_empty(room, rock_x + 1, rock_y + 2)
+        return check1 and check2 and check3
+
+    # For backward L type: Check (X, Y), (X + 1, Y), and (X + 2, Y)
+    if rock_type == "L":
+        check1 = is_empty(room, rock_x, rock_y + 1)
+        check2 = is_empty(room, rock_x + 1, rock_y + 1)
+        check3 = is_empty(room, rock_x + 2, rock_y + 1)
+        return check1 and check2 and check3
+
+    # For tall type: Check (X, Y)
+    if rock_type == "T":
+        return is_empty(room, rock_x, rock_y + 1)
+
+    # For big type: Check (X, Y) and (X + 1, Y)
+    if rock_type == "O":
+        check1 = is_empty(room, rock_x, rock_y + 1)
+        check2 = is_empty(room, rock_x + 1, rock_y)
+        return check1 and check2
 
 def drop_next_rock(room, jetstream, jetstream_position, rocks_dropped, max_height):
 
