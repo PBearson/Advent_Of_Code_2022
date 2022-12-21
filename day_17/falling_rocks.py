@@ -10,8 +10,11 @@ def initialize_room():
     room_width = 7
     room_height = 4 * 2022
 
-    room_row = ['.'] * room_width
-    room = [room_row] * room_height
+    room = []
+
+    for rh in range(room_height):
+        room_row = ['.'] * room_width
+        room.append(room_row)
 
     return room
 
@@ -121,7 +124,7 @@ def can_move_left(room, rock_type, rock_x, rock_y):
 def can_move_right(room, rock_type, rock_x, rock_y):
 
     # Is moving right out of bounds?
-    if move_right_is_out_of_bounds(rock_type, rock_x, len(room[0])):
+    if move_right_is_out_of_bounds(rock_type, rock_x, len(room[0]) - 1):
         return False
 
     # For wide type: check (X + 3, Y)
@@ -161,7 +164,7 @@ def can_move_right(room, rock_type, rock_x, rock_y):
 def can_move_down(room, rock_type, rock_x, rock_y):
 
     # Is moving down out of bounds?
-    if move_down_is_out_of_bounds(rock_type, rock_y, len(room)):
+    if move_down_is_out_of_bounds(rock_type, rock_y, len(room) - 1):
         return False
 
     # For wide type: Check (X, Y) through (X + 3, Y)
@@ -196,6 +199,22 @@ def can_move_down(room, rock_type, rock_x, rock_y):
         check2 = is_empty(room, rock_x + 1, rock_y)
         return check1 and check2
 
+# Draw the rock at the position based on its type
+def draw_rock(room, rock_type, rock_x, rock_y):
+    room[rock_y][rock_x] = '@'
+    room[rock_y][rock_x + 1] = '@'
+    room[rock_y][rock_x + 2] = '@'
+    room[rock_y][rock_x + 3] = '@'
+    print("Just updated %d, %d" % (rock_x, rock_y))
+    return # TODO
+
+# Return the new max height, depending on the type of rock that just dropped as well
+# as its position
+def update_max_height(room, current_max_height, rock_type, rock_x, rock_y):
+    return current_max_height # TODO
+
+# Drop the next rock. When the rock cannot drop any more, draw it in the room,
+# update the max height if needed, and return the new jetstream position and max height
 def drop_next_rock(room, jetstream, jetstream_position, rocks_dropped, max_height):
 
     # Get the next rock
@@ -205,11 +224,39 @@ def drop_next_rock(room, jetstream, jetstream_position, rocks_dropped, max_heigh
     # max height. 
     rock_x, rock_y = (2, len(room) - max_height - 4)
 
-    print(next_rock, rock_x, rock_y)
-    print(can_move_left(room, next_rock, rock_x, rock_y))
+    while True:
+        # Get jetstream direction
+        jetstream_direction = jetstream[jetstream_position % len(jetstream)]
+        
+        # Increment jetstream position
+        jetstream_position += 1
 
+        # Move rock left or right
+        if jetstream_direction == "<" and can_move_left(room, next_rock, rock_x, rock_y):
+            rock_x -= 1
+        elif jetstream_direction == ">" and can_move_right(room, next_rock, rock_x, rock_y):
+            rock_x += 1
+
+        # Move rock down, unless we can't, in which case, we are done
+        if can_move_down(room, next_rock, rock_x, rock_y):
+            rock_y += 1
+        
+        # Cannot drop any further
+        else:
+
+            # Draw the rock into the room, so that consecutive rocks can collide with it
+            draw_rock(room, next_rock, rock_x, rock_y)
+
+            # Update the max height as needed
+            max_height = update_max_height(room, max_height, next_rock, rock_x, rock_y)
+
+            # Return the new max height and jetstream position
+            return jetstream_position, max_height
 
 jetstream = input[0]
 room = initialize_room()
 
 drop_next_rock(room, jetstream, 0, 0, 0)
+
+for r in room[-20:]:
+    print(r)
