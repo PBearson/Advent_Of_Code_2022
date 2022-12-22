@@ -1,5 +1,7 @@
 # Find the height of the stack of rocks after 1000000000000 rocks have stopped falling
 
+# DISCLAIMER: This solution does not yet give the right answer.
+
 with open("day_17/sample_input.txt", "r") as f:
     file_input = f.read().splitlines()
 
