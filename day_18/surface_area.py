@@ -3,6 +3,7 @@
 with open("day_18/input.txt", "r") as f:
     input = f.read().splitlines()
 
+# From the input, get a list of cubes (each cube being a (x, y, z) tuple)
 def parse_input(input):
     cubes = []
 
@@ -13,10 +14,10 @@ def parse_input(input):
 
     return cubes
 
-# Given a cube and droplet (i.e., a cluster of cubes), return a list of cubes in the droplet
+# Given a cube and droplet (i.e., a cluster of cubes), return the number of cubes in the droplet
 # that are adjacent to our cube
-def get_adjacent_cubes(cube, droplet):
-    adjacent_cubes = []
+def get_num_adjacent_cubes(cube, droplet):
+    num_adjacent_cubes = 0
 
     # Check adjacency for each droplet unit. Cubes are adjacenct if any 2 coordinates are identical,
     # and the last coordinate is off by exactly 1.
@@ -32,9 +33,9 @@ def get_adjacent_cubes(cube, droplet):
 
         # If the cube is adjacent to this droplet unit, then append it
         if x_offset or y_offset or z_offset:
-            adjacent_cubes.append(d)
+            num_adjacent_cubes += 1
 
-    return adjacent_cubes
+    return num_adjacent_cubes
 
 # Get the surface area of the droplet
 def get_surface_area(cubes):
@@ -43,15 +44,13 @@ def get_surface_area(cubes):
 
     # Look at each cube in our input
     for cube in cubes:
-        
-        # First add the surface area of the cube to the droplet
-        surface_area += 6
 
         # Find the number of adjacent cubes
-        adjacent_cubes = get_adjacent_cubes(cube, droplet)
+        num_adjacent_cubes = get_num_adjacent_cubes(cube, droplet)
 
-        # For each adjacent cube, the surface area decreases by 2 sides
-        surface_area -= 2 * len(adjacent_cubes)
+        # The base surface area increases by 6 sides. For each adjacent cube, the surface area 
+        # decreases by 2 sides
+        surface_area += 6 - (2 * num_adjacent_cubes)
 
         # Add this cube to the droplet
         droplet.append(cube)
