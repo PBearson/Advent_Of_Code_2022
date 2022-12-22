@@ -1,5 +1,7 @@
 # Calculate the surface area of the lava droplet, which is made up of unit cubes
 
+# This solution is O(n^2), so not quite optimal.
+
 with open("day_18/input.txt", "r") as f:
     input = f.read().splitlines()
 
