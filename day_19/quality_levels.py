@@ -55,23 +55,56 @@ class Economy:
 
     # Put robots to work and increment the resource counts
     def step_economy(self):
-        return # TODO
+        self.ore_count += self.ore_robot_count * self.blueprint.ore_robot.production_blueprint.ore_production
+        self.clay_count += self.clay_robot_count * self.blueprint.clay_robot.production_blueprint.clay_production
+        self.obsidian_count += self.obsidian_robot_count * self.blueprint.obsidian_robot.production_blueprint.obsidian_production
+        self.geode_count += self.geode_robot_count * self.blueprint.geode_robot.production_blueprint.geode_production
+
+    # Try to buy a robot. Returns True if purchase occured
+    def purchase_robot(self, cost:CostBlueprint):
+        if self.ore_count < cost.ore_cost or self.clay_count < cost.clay_cost or self.obsidian_count < cost.obsidian_cost:
+            return False
+
+        self.ore_count -= cost.ore_cost
+        self.clay_count -= cost.clay_cost
+        self.obsidian_count -= cost.obsidian_cost
+        return True
 
     # Try to buy an ore robot. Return True if purchase occured
     def purchase_ore_robot(self):
-        return False # TODO
+        cost = self.blueprint.ore_robot.cost_blueprint
+        if not self.purchase_robot(cost):
+            return False
+        
+        self.ore_robot_count += 1
+        return True
 
     # Try to buy a clay robot. Return True if purchase occured
     def purchase_clay_robot(self):
-        return False # TODO
+        cost = self.blueprint.clay_robot.cost_blueprint
+        if not self.purchase_robot(cost):
+            return False
+        
+        self.clay_robot_count += 1
+        return True
 
     # Try to buy an obsidian robot. Return True if purchase occured
     def purchase_obsidian_robot(self):
-        return False # TODO
+        cost = self.blueprint.obsidian_robot.cost_blueprint
+        if not self.purchase_robot(cost):
+            return False
+        
+        self.obsidian_robot_count += 1
+        return True
 
     # Try to buy a geode robot. Return True if purchase occured
     def purchase_geode_robot(self):
-        return False # TODO
+        cost = self.blueprint.geode_robot.cost_blueprint
+        if not self.purchase_robot(cost):
+            return False
+        
+        self.geode_robot_count += 1
+        return True
 
     def __str__(self):
         resources_gathered_str = f"Resources gathered: {self.ore_count} ore, {self.clay_count} clay, {self.obsidian_count} obsidian, {self.geode_count} geode"
