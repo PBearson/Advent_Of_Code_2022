@@ -42,11 +42,45 @@ class Blueprint:
         self.geode_robot = geode_robot
 
     def __str__(self):
-        return f"Blueprint:\n\tOre robot:\t{self.ore_robot}\n\tClay robot:\t{self.clay_robot}\n\tObsidian robot:\t{self.obsidian_robot}\n\tGeode robot:\t{self.geode_robot}\n"
+        return f"Blueprint:\n\tOre robot:\t{self.ore_robot}\n\tClay robot:\t{self.clay_robot}\n\tObsidian robot:\t{self.obsidian_robot}\n\tGeode robot:\t{self.geode_robot}"
 
-# Parse the input and define the set of blueprints
+# An economy tracks the number of resources on hand, including robots. An economy
+# is tied to a blueprint
+class Economy:
+    def __init__(self, blueprint:Blueprint):
+        self.blueprint = blueprint
+        self.ore_count = self.clay_count = self.obsidian_count = self.geode_count = 0
+        self.ore_robot_count = 1
+        self.clay_robot_count = self.obsidian_robot_count = self.geode_robot_count = 0
+
+    # Put robots to work and increment the resource counts
+    def step_economy(self):
+        return # TODO
+
+    # Try to buy an ore robot. Return True if purchase occured
+    def purchase_ore_robot(self):
+        return False # TODO
+
+    # Try to buy a clay robot. Return True if purchase occured
+    def purchase_clay_robot(self):
+        return False # TODO
+
+    # Try to buy an obsidian robot. Return True if purchase occured
+    def purchase_obsidian_robot(self):
+        return False # TODO
+
+    # Try to buy a geode robot. Return True if purchase occured
+    def purchase_geode_robot(self):
+        return False # TODO
+
+    def __str__(self):
+        resources_gathered_str = f"Resources gathered: {self.ore_count} ore, {self.clay_count} clay, {self.obsidian_count} obsidian, {self.geode_count} geode"
+        robots_spawned_str = f"Robots spawned: {self.ore_robot_count} ore robots, {self.clay_robot_count} clay robots, {self.obsidian_robot_count} obsidian robots, {self.geode_robot_count} geode robots"
+        return f"{self.blueprint}\nEconomy:\n\t{resources_gathered_str}\n\t{robots_spawned_str}\n"
+
+# Parse the input and define the starting economies for each blueprint
 def parse_input(input):
-    all_blueprints = []
+    all_economies = []
 
     for blueprint_txt in input:
         ore_robot_txt, clay_robot_txt, obsidian_robot_txt, geode_robot_txt = blueprint_txt.split(".")[:4]
@@ -83,13 +117,14 @@ def parse_input(input):
         obsidian_robot = Robot(obsidian_cost_blueprint, obsidian_production_blueprint)
         geode_robot = Robot(geode_cost_blueprint, geode_production_blueprint)
 
-        # Create final blueprint
+        # Create final blueprint and economy
         blueprint = Blueprint(ore_robot, clay_robot, obsidian_robot, geode_robot)
-        all_blueprints.append(blueprint)
+        economy = Economy(blueprint)
+        all_economies.append(economy)
 
-    return all_blueprints
+    return all_economies
 
-blueprints = parse_input(input)
+economies = parse_input(input)
 
-for b in blueprints:
-    print(b)
+for e in economies:
+    print(e)
